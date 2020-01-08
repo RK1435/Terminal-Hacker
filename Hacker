@@ -1,0 +1,180 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Hacker : MonoBehaviour
+{
+    //Game Configuration data
+    const string menuHint = "You may type menu at Any Time.";
+    string[] level1Passwords = { "play", "stop", "come", "home", "like" };
+    string[] level2Passwords = { "floor", "store", "grade", "outside", "house" };
+    string[] level3Passwords = { "animal", "teacher", "weather", "something", "everybody" };
+
+    //Game State
+    int level;  //(level is a Member variable) (Global Variable)
+
+    enum Screen {MainMenu, Password, Win};
+    Screen currentScreen;
+    string password;
+
+    // Use this for Initialization
+    void Start()
+    {
+        ShowMainMenu();   
+    }
+
+    void ShowMainMenu()
+    {
+        currentScreen = Screen.MainMenu;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("What would you like to Hack in to..?");
+        Terminal.WriteLine("Press 1 for the Small Company");
+        Terminal.WriteLine("Press 2 for the Bank");
+        Terminal.WriteLine("Press 3 for the CIA Headquarters");
+        Terminal.WriteLine("Enter your choice : ");
+    }
+
+    // This should only how to handle input, not actually dop it.
+    void OnUserInput(string input)
+    {
+        if (input == "menu")
+        {
+            ShowMainMenu();
+        }
+
+        else if (currentScreen == Screen.MainMenu)
+        {
+            RunMainMenu(input);
+        }
+
+        else if (currentScreen == Screen.Password)
+        {
+            CheckPassword(input);
+        }
+    }
+
+    void RunMainMenu(string input)
+    {
+        bool isValidLevelNumber = (input == "1" || input == "2" || input == "3");
+        if(isValidLevelNumber)
+        {
+            level = int.Parse(input);
+            AskForPassword();
+        }
+
+
+        else if (input == "007")
+        {
+            Terminal.WriteLine("Please select your level Mr.Bond...!");
+        }
+        else
+        {
+            Terminal.WriteLine("Invalid Level Entery... Enter Existing Levels");
+            Terminal.WriteLine(menuHint);
+        }
+    }
+
+    void AskForPassword()
+    {
+        currentScreen = Screen.Password;
+        Terminal.ClearScreen();
+        SetRandomPassword();
+        Terminal.WriteLine("Enter your Password, Hint :" + password.Anagram());
+        Terminal.WriteLine(menuHint);
+    }
+
+    void SetRandomPassword()
+    {
+        switch (level)
+        {
+            case 1:
+                int index1 = Random.Range(0, level1Passwords.Length);
+                password = level1Passwords[index1];
+                break;
+
+            case 2:
+                int index2 = Random.Range(0, level2Passwords.Length);
+                password = level2Passwords[index2];
+                break;
+
+            case 3:
+                int index3 = Random.Range(0, level3Passwords.Length);
+                password = level3Passwords[index3];
+                break;
+
+            defualt:
+                Debug.LogError("Invalid Level Number");
+                break;
+        }
+    }
+
+    void CheckPassword(string input)
+    {
+        if (input == password)
+        {
+            DisplayWinScreen();
+        }
+
+        else
+        {
+            AskForPassword();
+        }
+
+    }
+
+    void DisplayWinScreen()
+    {
+        currentScreen = Screen.Win;
+        Terminal.ClearScreen();
+        ShowLevelReward();
+        Terminal.WriteLine(menuHint);
+    }
+
+    void ShowLevelReward()
+    {
+        switch(level)
+        {
+            case 1:
+                Terminal.WriteLine("Have a Book....");
+                Terminal.WriteLine(@"
+
+    ________
+   /       //
+  /       //                 
+ /_______//
+(_______(/
+"                                 );
+                break;
+
+            case 2:
+                Terminal.WriteLine("You got the Prision Key...!!");
+                Terminal.WriteLine(@"
+
+    ______
+   / 0    \
+  /        \______________
+  \        /-=' -=' -=' -=
+   \______/
+");
+                Terminal.WriteLine("Play again for a Greater Level Challenge!! ");
+                break;
+
+            case 3:
+                Terminal.WriteLine("You got a Bug to Eat...!!!");
+                Terminal.WriteLine(@"
+
+    _____     ______        __
+   /  ___|   |__  __|      /\ \
+  /  /         |  |       /__\ \
+  \  \___    __|  |__    //__ \ \
+   \_____|  |________|  /_/    \_\
+");
+                Terminal.WriteLine("Welcome to CIA's Internal System!!!");
+                break;
+            default:
+                Debug.LogError("Invalid level Reached... Go back!!");
+                break;
+
+        }
+    }
+}
